@@ -420,16 +420,30 @@ Responde estas preguntas (puedes escribirlas como comentarios en un archivo `NOT
 2. Si mañana quisieras cambiar los datos en memoria por una base de datos PostgreSQL, ¿en qué archivo harías el cambio principalmente?
 3. ¿Qué pasaría si en el router tuvieras `/:id` antes que `/:id/resenas`? Pruébalo y describe el resultado.
 
+
+# Notas de aprendizaje - Proyecto Movie API
+
+### 1. ¿Por qué es mejor tener el controlador separado de las rutas?
+La separación de intereses facilita el mantenimiento. El archivo de rutas solo se encarga de decir "qué URL existe", mientras que el controlador se encarga de "qué lógica ejecutar". Si tu aplicación crece, buscar un error de lógica es mucho más rápido en un archivo de controlador que en uno de rutas lleno de definiciones de URL.
+
+### 2. Si cambiamos a PostgreSQL, ¿en qué archivo harías el cambio?
+El cambio se haría principalmente en `src/data/peliculas.js`. Gracias a la arquitectura que estamos usando, el controlador no sabe (ni le importa) si los datos vienen de un array en memoria o de una base de datos SQL. Solo tendrías que cambiar la implementación interna de los métodos `getAll`, `getById`, etc., para que hagan consultas SQL en lugar de usar `.filter()` o `.find()`.
+
+### 3. ¿Qué pasaría si en el router tuvieras /:id antes que /:id/resenas?
+Express evalúa las rutas en orden de arriba hacia abajo. Si pones `/:id` primero, cuando intentes entrar a `/1/resenas`, Express podría interpretar que "1/resenas" es el ID de una película en lugar de una ruta anidada. 
+**Resultado:** El router intentaría ejecutar `obtenerPelicula` buscando una película con el ID "1/resenas", lo que probablemente daría un error 404 o un error de conversión a número.
+
+
 ## Criterios de evaluación
 
-- [ ] La estructura de carpetas coincide con la indicada en el objetivo
-- [ ] `index.js` no contiene lógica de rutas (solo configuración y montaje)
-- [ ] El router solo contiene `router.get/post/put/delete` y exports, sin lógica
-- [ ] El controlador no usa `app`, solo `req`, `res` y el módulo de datos
-- [ ] Todas las rutas del Lab D1 siguen funcionando bajo `/api/`
-- [ ] `GET /api/peliculas/:id/resenas` devuelve las reseñas de esa película
-- [ ] `POST /api/peliculas/:id/resenas` valida los campos y crea la reseña
-- [ ] `POST /api/peliculas/999/resenas` devuelve 404
+- [x] La estructura de carpetas coincide con la indicada en el objetivo
+- [x] `index.js` no contiene lógica de rutas (solo configuración y montaje)
+- [x] El router solo contiene `router.get/post/put/delete` y exports, sin lógica
+- [x] El controlador no usa `app`, solo `req`, `res` y el módulo de datos
+- [x] Todas las rutas del Lab D1 siguen funcionando bajo `/api/`
+- [x] `GET /api/peliculas/:id/resenas` devuelve las reseñas de esa película
+- [x] `POST /api/peliculas/:id/resenas` valida los campos y crea la reseña
+- [x] `POST /api/peliculas/999/resenas` devuelve 404
 
 ## Bonus
 
